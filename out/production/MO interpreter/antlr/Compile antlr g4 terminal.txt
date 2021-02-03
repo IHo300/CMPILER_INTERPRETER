@@ -1,1 +1,0 @@
-java -jar ../../lib/antlr-4.9-complete.jar Thanos.g4

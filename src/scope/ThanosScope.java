@@ -1,7 +1,10 @@
 package scope;
 
 
+import representations.ThanosFunction;
 import representations.ThanosValue;
+
+import java.util.HashMap;
 
 public class ThanosScope implements IScope{
     private final static String TAG = "MobiProg_ClassScope";
@@ -41,9 +44,9 @@ public class ThanosScope implements IScope{
     public void addEmptyVariable(String primitiveTypeString, String identifierString) {
 
         //create empty mobi value
-        ThanosValue ThanosValue = ThanosValue.createEmptyVariable(primitiveTypeString);
+        ThanosValue thanosValue = ThanosValue.createEmptyVariable(primitiveTypeString);
 
-        this.variables.put(identifierString, ThanosValue);
+        this.variables.put(identifierString, thanosValue);
     }
 
     /*
