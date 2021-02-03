@@ -1,7 +1,7 @@
 package Adders;
 
 import Commands.ICommand;
-import Representations.ThanosFunction;
+import representations.ThanosFunction;
 
 public class FunctionExecutionAdder implements IExecutionAdder {
 

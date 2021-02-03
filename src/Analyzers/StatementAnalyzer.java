@@ -1,5 +1,6 @@
 package Analyzers;
 
+import Commands.*;
 import errors.UndeclaredChecker;
 import Execution.ExecutionManager;
 import GeneratedAntlrClasses.ThanosLexer;
