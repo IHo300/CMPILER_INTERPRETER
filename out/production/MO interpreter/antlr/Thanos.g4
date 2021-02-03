@@ -1,5 +1,5 @@
 
-grammar C;
+grammar Thanos;
 
 
 primaryExpression
