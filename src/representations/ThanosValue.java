@@ -1,7 +1,13 @@
 package representations;
 
+import Utlities.KeywordRecognizer;
+import Utlities.StringUtilities;
 
 public class ThanosValue {
+
+
+    //these are the accepted primitive types
+
     private Object defaultValue; //this value will no longer change.
     private Object value;
     private PrimitiveType primitiveType = PrimitiveType.NOT_YET_IDENTIFIED;
@@ -125,4 +131,5 @@ public class ThanosValue {
 
         return mobiValue;
     }
+
 }

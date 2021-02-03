@@ -1,33 +1,40 @@
-package commands;
-import antlr.ThanosParser;
+package Commands;
+
+import errors.UndeclaredChecker;
+import GeneratedAntlrClasses.ThanosParser;
+import representations.ThanosArray;
+import representations.ThanosValue;
+import representations.ThanosValueSearcher;
+import representations.PrimitiveType;
+import Utlities.StringUtilities;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.antlr.v4.runtime.tree.ErrorNode;
 
-public class PrintCommand implements ICommand{
+public class PrintCommand implements ICommand, ParseTreeListener {
 
-    private ThanosParser.ExpressionContext exprCtx;
-    private String stmtToPrint = "";
+    private ThanosParser.ExpressionContext expressionCtx;
 
-    private boolean evaluatedExp = false;
+    private String statementToPrint = "";
+    private boolean complexExpr = false;
+    private boolean arrayAccess = false;
 
-    public PrintCommand(ThanosParser.StatementContext stmtCtx) {
+    public PrintCommand(ThanosParser.ExpressionContext expressionCtx) {
+        this.expressionCtx = expressionCtx;
 
-        this.exprCtx = stmtCtx.printStatement();
-
-//        UndeclaredChecker undeclaredChecker = new UndeclaredChecker(expressionCtx);
-//        undeclaredChecker.verify();
-//
-//        stmtToPrint = "";
+        UndeclaredChecker undeclaredChecker = new UndeclaredChecker(this.expressionCtx);
+        undeclaredChecker.verify();
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         ParseTreeWalker treeWalker = new ParseTreeWalker();
         treeWalker.walk(this, this.expressionCtx);
 
-        System.out.println(this.stmtToPrint);//TODO PRINT STATEMENT ON FRONT END
-        this.stmtToPrint = ""; //reset statement to print afterwards
+        System.out.println(this.statementToPrint);//TODO PRINT STATEMENT ON FRONT END
+        this.statementToPrint = ""; //reset statement to print afterwards
     }
 
     @Override
@@ -49,26 +56,26 @@ public class PrintCommand implements ICommand{
             if(literalCtx.StringLiteral() != null) {
                 String quotedString = literalCtx.StringLiteral().getText();
 
-                this.stmtToPrint += StringUtilities.removeQuotes(quotedString);
+                this.statementToPrint += StringUtilities.removeQuotes(quotedString);
             }
-            else if(literalCtx.IntegerLiteral() != null) {
-                int value = Integer.parseInt(literalCtx.IntegerLiteral().getText());
-                this.stmtToPrint += value;
-            }
+			else if(literalCtx.IntegerLiteral() != null) {
+				int value = Integer.parseInt(literalCtx.IntegerLiteral().getText());
+				this.statementToPrint += value;
+			}
 
-            else if(literalCtx.FloatingPointLiteral() != null) {
-                float value = Float.parseFloat(literalCtx.FloatingPointLiteral().getText());
-                this.stmtToPrint += value;
-            }
+			else if(literalCtx.FloatingPointLiteral() != null) {
+				float value = Float.parseFloat(literalCtx.FloatingPointLiteral().getText());
+				this.statementToPrint += value;
+			}
 
-            else if(literalCtx.BooleanLiteral() != null) {
-                this.stmtToPrint += literalCtx.BooleanLiteral().getText();
-            }
+			else if(literalCtx.BooleanLiteral() != null) {
+				this.statementToPrint += literalCtx.BooleanLiteral().getText();
+			}
 
-            else if(literalCtx.CharacterLiteral() != null) {
+			else if(literalCtx.CharacterLiteral() != null) {
                 String quotedString = literalCtx.CharacterLiteral().getText();
-                this.stmtToPrint +=  StringUtilities.removeQuotes(quotedString);
-            }
+                this.statementToPrint +=  StringUtilities.removeQuotes(quotedString);
+			}
         }
 
         else if(ctx instanceof ThanosParser.PrimaryContext) {
@@ -82,7 +89,7 @@ public class PrintCommand implements ICommand{
                 EvaluationCommand evaluationCommand = new EvaluationCommand(exprCtx);
                 evaluationCommand.execute();
 
-                this.stmtToPrint += evaluationCommand.getResult().toEngineeringString();
+                this.statementToPrint += evaluationCommand.getResult().toEngineeringString();
             }
 
             else if(primaryCtx.Identifier() != null && this.complexExpr == false) {
@@ -94,21 +101,21 @@ public class PrintCommand implements ICommand{
                     this.evaluateArrayPrint(value, primaryCtx);
                 }
                 else if(this.arrayAccess == false) {
-                    this.stmtToPrint += value.getValue();
+                    this.statementToPrint += value.getValue();
                 }
 
 
             }
         }
     }
-    
+
     @Override
     public void exitEveryRule(ParserRuleContext ctx) {
 
     }
 
-    public String getstmtToPrint() {
-        return this.stmtToPrint;
+    public String getStatementToPrint() {
+        return this.statementToPrint;
     }
 
     private void evaluateArrayPrint(ThanosValue ThanosValue, ThanosParser.PrimaryContext primaryCtx) {
@@ -123,7 +130,9 @@ public class PrintCommand implements ICommand{
         ThanosArray ThanosArray = (ThanosArray) ThanosValue.getValue();
         ThanosValue arrayThanosValue = ThanosArray.getValueAt(evaluationCommand.getResult().intValue());
 
-        this.stmtToPrint += arrayThanosValue.getValue().toString();
+        this.statementToPrint += arrayThanosValue.getValue().toString();
     }
+
+
 
 }

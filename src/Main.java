@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class View{
+public class Main {
     public static void main(String[] args) throws Exception {
         Frame f = new Frame();
         f.setSize(500,820);

@@ -1,5 +1,5 @@
-package commands;
+package Commands;
 
 public interface ICommand {
-    public abstract void execute();
+    void execute();
 }
